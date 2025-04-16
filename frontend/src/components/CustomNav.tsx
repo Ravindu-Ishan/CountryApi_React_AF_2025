@@ -20,12 +20,22 @@ export function CustomNav() {
       rounded
       className="max-w-full bg-transparent dark:bg-transparent"
     >
-      <div className="flex w-full justify-end">
-        <a href="#" className="text-md mt-2 mr-2 text-black hover:underline">
-          Signup
-        </a>
+      <div className="flex items-center justify-between w-full">
+        <div className="flex">
+          <ToggleSwitch
+            checked={isDarkMode}
+            label="Theme"
+            onChange={setIsDarkMode}
+            color="dark"
+            className="focus:outline-none focus:ring-0"
+          />
+        </div>
+        <div className="flex">
+          <a href="#" className="text-md mt-2 mr-2 text-black hover:underline">
+            Signup
+          </a>
+        </div>
       </div>
-      <ToggleSwitch checked={isDarkMode} label="Toggle me" onChange={setIsDarkMode} />
     </Navbar>
   );
 }

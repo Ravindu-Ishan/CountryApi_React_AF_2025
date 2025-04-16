@@ -10,10 +10,6 @@ function Page() {
   const [data, setData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const fetchData = async () => {
     const data = await getCountries();
     if (data != null) {
@@ -24,6 +20,10 @@ function Page() {
   const filteredData = data.filter((item: any) =>
     item.name.common.toLowerCase().includes(searchTerm.toLowerCase()),
   );
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <div className="relative">
