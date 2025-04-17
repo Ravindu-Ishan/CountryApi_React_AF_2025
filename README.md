@@ -59,13 +59,13 @@ This project uses google maps api
 ### Endpoints Used from restcountries api
 
 > https://restcountries.com/v3.1/all?fields=name,flags
-Used to retrieve a the full list of available countries. Only the country name and flag is retrieved to optimize load times.
+- Used to retrieve a the full list of available countries. Only the country name and flag is retrieved to optimize load times.
 > https://restcountries.com/v3.1/name/{name}?fullText=true
-Used to retrieve all available information about a country to display details of a selected country.
+- Used to retrieve all available information about a country to display details of a selected country.
 > https://restcountries.com/v3.1/region/{region}
-Used to retrieve countries in a specific region. This endpoint was used as a filtering option.
+- Used to retrieve countries in a specific region. This endpoint was used as a filtering option.
 > https://restcountries.com/v3.1/lang/{language}
-Used to retrieve countries that use the defined language. This endpoint was used as a filtering option.
+- Used to retrieve countries that use the defined language. This endpoint was used as a filtering option.
 
 ### Challenges faced
 1. Theme issues and react flowbite components not rendering properly.
