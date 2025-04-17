@@ -1,3 +1,5 @@
+"use client";
+
 import { Navbar } from "flowbite-react";
 import { useState, useEffect } from "react";
 import { ToggleSwitch } from "flowbite-react";

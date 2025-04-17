@@ -12,56 +12,66 @@ import Link from "next/link";
 import { Button, Dropdown, DropdownItem } from "flowbite-react";
 import { LuFilter } from "react-icons/lu";
 
+// Define the Country interface
+interface Country {
+  flags: {
+    png: string;
+  };
+  name: {
+    common: string;
+  };
+  // Add other properties as needed
+}
+
 function Page() {
-  const [data, setData] = useState([]);
-  const [primaryData, setPrimaryData] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filter, setFilter] = useState("");
-  const [selectedRegion, setSelectedRegion] = useState("");
-  const [language, setLanguage] = useState("");
-  const [warn, setWarn] = useState(false);
-  const [isHydrated, setIsHydrated] = useState(false); 
-  
-  // 1. Load sessionStorage only once, on mount
+  // Explicitly type state variables
+  const [data, setData] = useState<Country[]>([]);
+  const [primaryData, setPrimaryData] = useState<Country[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [filter, setFilter] = useState<string>("");
+  const [selectedRegion, setSelectedRegion] = useState<string>("");
+  const [language, setLanguage] = useState<string>("");
+  const [warn, setWarn] = useState<boolean>(false);
+  const [isHydrated, setIsHydrated] = useState<boolean>(false);
+
+  // Load sessionStorage only once, on mount
   useEffect(() => {
     const savedSearchTerm = sessionStorage.getItem("searchTerm");
     const savedFilter = sessionStorage.getItem("filter");
     const savedSelectedRegion = sessionStorage.getItem("selectedRegion");
     const savedLanguage = sessionStorage.getItem("language");
-  
+
     if (savedSearchTerm !== null) setSearchTerm(savedSearchTerm);
     if (savedFilter !== null) setFilter(savedFilter);
     if (savedSelectedRegion !== null) setSelectedRegion(savedSelectedRegion);
     if (savedLanguage !== null) setLanguage(savedLanguage);
-  
+
     // After loading all values, mark as hydrated
     setIsHydrated(true);
-    
+
     // Default load all data first
-  fetchData();
+    fetchData();
 
-  // Then trigger specific filter logic if applicable
-  if (savedFilter === "Language" && savedLanguage !== "") {
-    getCountryByLanguage(savedLanguage || "").then((data) => {
-      if (data != null) setData(data);
-    });
-  } else if (savedFilter === "Region" && savedSelectedRegion !== "") {
-    getCountryByRegion(savedSelectedRegion || "").then((data) => {
-      if (data != null) setData(data);
-    });
-  }
-
+    // Then trigger specific filter logic if applicable
+    if (savedFilter === "Language" && savedLanguage !== "") {
+      getCountryByLanguage(savedLanguage || "").then((data) => {
+        if (data != null) setData(data);
+      });
+    } else if (savedFilter === "Region" && savedSelectedRegion !== "") {
+      getCountryByRegion(savedSelectedRegion || "").then((data) => {
+        if (data != null) setData(data);
+      });
+    }
   }, []);
-  
+
   // Sync state to sessionStorage ONLY after hydration
   useEffect(() => {
-    if (!isHydrated) return; 
+    if (!isHydrated) return;
     sessionStorage.setItem("searchTerm", searchTerm);
     sessionStorage.setItem("filter", filter);
     sessionStorage.setItem("selectedRegion", selectedRegion);
     sessionStorage.setItem("language", language);
   }, [searchTerm, filter, selectedRegion, language, isHydrated]);
-  
 
   const fetchData = async () => {
     const data = await getCountries();
@@ -71,7 +81,8 @@ function Page() {
     }
   };
 
-  const filteredData = data.filter((item: any) =>
+  // Filtered data based on search term
+  const filteredData = data.filter((item: Country) =>
     item.name.common.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -81,6 +92,10 @@ function Page() {
       setData(primaryData);
       setSelectedRegion("");
       setLanguage("");
+    }
+    if (filter === "Language") {
+      setSelectedRegion("");
+      setData(primaryData);
     }
   };
 
@@ -122,8 +137,16 @@ function Page() {
 
         <div className="flex flex-col items-center">
           <div className="flex-row py-5">
-            <img src="BrandTitle.svg" alt="Brand Title" className="block dark:hidden"/>
-            <img src="DarkMode_BrandTitle.svg" alt="Brand Title" className="hidden dark:block" />
+            <img
+              src="BrandTitle.svg"
+              alt="Brand Title"
+              className="block dark:hidden"
+            />
+            <img
+              src="DarkMode_BrandTitle.svg"
+              alt="Brand Title"
+              className="hidden dark:block"
+            />
           </div>
           <div className="flex w-full items-center justify-center">
             <Dropdown
@@ -131,10 +154,10 @@ function Page() {
               dismissOnClick={true}
               renderTrigger={() => (
                 <div
-                  className={`text-gray-600 mr-2 p-2 inline-flex rounded-xl shadow-md shadow-gray-300 focus:outline-none focus:ring-0 hover:cursor-default ${
+                  className={`text-gray-600 mr-2 p-2 inline-flex rounded-xl shadow-md shadow-gray-300 focus:outline-none focus:ring-0 hover:cursor-default dark:text-white  ${
                     filter !== ""
                       ? "bg-gray-400 text-gray-800"
-                      : "bg-white hover:bg-gray-400"
+                      : "bg-white hover:bg-gray-400 dark:bg-gray-900 dark:hover:bg-gray-800"
                   }`}
                 >
                   <LuFilter className=" mt-1.5" /> Filter
@@ -156,13 +179,13 @@ function Page() {
             </Dropdown>
             {filter === "Language" ? (
               <div
-                className={`inline-flex max-w-3xl items-center rounded-xl bg-white p-1 shadow-md shadow-gray-300 focus:outline-none ${
+                className={`inline-flex max-w-3xl items-center rounded-xl bg-white p-1 shadow-md shadow-gray-300 focus:outline-none dark:bg-gray-500 ${
                   warn ? "outline outline-red-500" : ""
                 }`}
               >
                 <CiSearch className="ml-2 text-xl" />
                 <input
-                  className="ml-2 flex-1 border-none bg-white p-2 text-sm focus:outline-none "
+                  className="ml-2 flex-1 border-none bg-white p-2 text-sm focus:outline-none dark:bg-gray-500 "
                   type="text"
                   placeholder="Eg : English"
                   value={language}
@@ -171,17 +194,17 @@ function Page() {
                 />
                 <Button
                   size="sm"
-                  onClick={(e) => handleLanguageSearch()}
-                  className="focus:ring-0"
+                  onClick={() => handleLanguageSearch()}
+                  className="focus:ring-0 dark:bg-gray-900 dark:hover:bg-gray-800"
                 >
                   Search
                 </Button>
               </div>
             ) : (
-              <div className="inline-flex max-w-3xl items-center rounded-xl bg-white p-1 shadow-md shadow-gray-300 focus:outline-none">
+              <div className="inline-flex max-w-3xl items-center rounded-xl bg-white p-1 shadow-md shadow-gray-300 focus:outline-none dark:bg-gray-500">
                 <CiSearch className="ml-2 text-xl" />
                 <input
-                  className="ml-2 flex-1 border-none bg-white p-2 text-sm focus:outline-none "
+                  className="ml-2 flex-1 border-none bg-white p-2 text-sm focus:outline-none dark:bg-gray-500 "
                   type="text"
                   placeholder="Search a country..."
                   value={searchTerm}
@@ -195,7 +218,9 @@ function Page() {
               <Button
                 color="alternative"
                 className={`rounded-3xl shadow-md shadow-gray-300 focus:ring-0 hover:bg-gray-400 ${
-                  selectedRegion === "Asia" ? "bg-gray-500 text-white" : ""
+                  selectedRegion === "Asia"
+                    ? "bg-gray-500 text-white dark:bg-gray-700"
+                    : ""
                 }`}
                 onClick={() => handleRegionClick("Asia")}
               >
@@ -204,7 +229,9 @@ function Page() {
               <Button
                 color="alternative"
                 className={`rounded-3xl shadow-md shadow-gray-300 focus:ring-0 hover:bg-gray-400 ${
-                  selectedRegion === "America" ? "bg-gray-500 text-white" : ""
+                  selectedRegion === "America"
+                    ? "bg-gray-500 text-white dark:bg-gray-700 "
+                    : ""
                 }`}
                 onClick={() => handleRegionClick("America")}
               >
@@ -213,7 +240,9 @@ function Page() {
               <Button
                 color="alternative"
                 className={`rounded-3xl shadow-md shadow-gray-300 focus:ring-0 hover:bg-gray-400 ${
-                  selectedRegion === "Africa" ? "bg-gray-500 text-white" : ""
+                  selectedRegion === "Africa"
+                    ? "bg-gray-500 text-white dark:bg-gray-700"
+                    : ""
                 }`}
                 onClick={() => handleRegionClick("Africa")}
               >
@@ -222,7 +251,9 @@ function Page() {
               <Button
                 color="alternative"
                 className={`rounded-3xl shadow-md shadow-gray-300 focus:ring-0 hover:bg-gray-400 ${
-                  selectedRegion === "Europe" ? "bg-gray-500 text-white" : ""
+                  selectedRegion === "Europe"
+                    ? "bg-gray-500 text-white dark:bg-gray-700"
+                    : ""
                 }`}
                 onClick={() => handleRegionClick("Europe")}
               >
@@ -231,7 +262,9 @@ function Page() {
               <Button
                 color="alternative"
                 className={`rounded-3xl shadow-md shadow-gray-300 focus:ring-0 hover:bg-gray-400 ${
-                  selectedRegion === "Oceania" ? "bg-gray-500 text-white" : ""
+                  selectedRegion === "Oceania"
+                    ? "bg-gray-500 text-white dark:bg-gray-700"
+                    : ""
                 }`}
                 onClick={() => handleRegionClick("Oceania")}
               >
@@ -247,7 +280,7 @@ function Page() {
           <div className="h-[400px] w-full max-w-6xl overflow-y-scroll rounded-lg border border-gray-400 bg-white p-5 shadow-lg dark:bg-gray-700">
             {filteredData.length > 0 ? (
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-                {filteredData.map((item: any) => (
+                {filteredData.map((item: Country) => (
                   <Link
                     href={`/country?name=${item.name.common}`}
                     key={item.name.common}
