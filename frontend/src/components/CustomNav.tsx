@@ -32,7 +32,7 @@ export function CustomNav() {
         </div>
         <div className="flex">
           <a href="#" className="text-md mt-2 mr-2 text-black hover:underline">
-            Signup
+            Welcome to NationsInfo
           </a>
         </div>
       </div>

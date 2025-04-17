@@ -18,4 +18,22 @@ async function getCountryByName(name: string) {
     }
 }
 
-export { getCountries, getCountryByName };
+async function getCountryByRegion(region: string) {
+    try {
+        const response = await axios.get(`https://restcountries.com/v3.1/region/${region}`);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+async function getCountryByLanguage(language: string) {
+    try {
+        const response = await axios.get(`https://restcountries.com/v3.1/lang/${language}`);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export { getCountries, getCountryByName, getCountryByRegion, getCountryByLanguage };
