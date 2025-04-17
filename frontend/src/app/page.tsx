@@ -16,10 +16,52 @@ function Page() {
   const [data, setData] = useState([]);
   const [primaryData, setPrimaryData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedRegion, setSelectedRegion] = useState("");
   const [filter, setFilter] = useState("");
+  const [selectedRegion, setSelectedRegion] = useState("");
   const [language, setLanguage] = useState("");
   const [warn, setWarn] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false); 
+  
+  // 1. Load sessionStorage only once, on mount
+  useEffect(() => {
+    const savedSearchTerm = sessionStorage.getItem("searchTerm");
+    const savedFilter = sessionStorage.getItem("filter");
+    const savedSelectedRegion = sessionStorage.getItem("selectedRegion");
+    const savedLanguage = sessionStorage.getItem("language");
+  
+    if (savedSearchTerm !== null) setSearchTerm(savedSearchTerm);
+    if (savedFilter !== null) setFilter(savedFilter);
+    if (savedSelectedRegion !== null) setSelectedRegion(savedSelectedRegion);
+    if (savedLanguage !== null) setLanguage(savedLanguage);
+  
+    // After loading all values, mark as hydrated
+    setIsHydrated(true);
+    
+    // Default load all data first
+  fetchData();
+
+  // Then trigger specific filter logic if applicable
+  if (savedFilter === "Language" && savedLanguage !== "") {
+    getCountryByLanguage(savedLanguage || "").then((data) => {
+      if (data != null) setData(data);
+    });
+  } else if (savedFilter === "Region" && savedSelectedRegion !== "") {
+    getCountryByRegion(savedSelectedRegion || "").then((data) => {
+      if (data != null) setData(data);
+    });
+  }
+
+  }, []);
+  
+  // Sync state to sessionStorage ONLY after hydration
+  useEffect(() => {
+    if (!isHydrated) return; 
+    sessionStorage.setItem("searchTerm", searchTerm);
+    sessionStorage.setItem("filter", filter);
+    sessionStorage.setItem("selectedRegion", selectedRegion);
+    sessionStorage.setItem("language", language);
+  }, [searchTerm, filter, selectedRegion, language, isHydrated]);
+  
 
   const fetchData = async () => {
     const data = await getCountries();
@@ -66,15 +108,11 @@ function Page() {
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   return (
-    <div className="relative">
+    <div className="relative dark:text-white ">
       {/* Background image with opacity */}
       <div
-        className="absolute inset-0 bg-[url(../../public/BackgroundMap.svg)] bg-cover bg-no-repeat opacity-50"
+        className="absolute inset-0 bg-[url(../../public/BackgroundMap.svg)] bg-cover bg-no-repeat opacity-50 dark:opacity-100 dark:bg-gray-600"
         aria-hidden="true"
       ></div>
 
@@ -84,7 +122,8 @@ function Page() {
 
         <div className="flex flex-col items-center">
           <div className="flex-row py-5">
-            <img src="BrandTitle.svg" alt="Brand Title" />
+            <img src="BrandTitle.svg" alt="Brand Title" className="block dark:hidden"/>
+            <img src="DarkMode_BrandTitle.svg" alt="Brand Title" className="hidden dark:block" />
           </div>
           <div className="flex w-full items-center justify-center">
             <Dropdown
@@ -205,7 +244,7 @@ function Page() {
         </div>
 
         <div className="mt-2 flex min-h-screen justify-center">
-          <div className="h-[400px] w-full max-w-6xl overflow-y-scroll rounded-lg border border-gray-400 bg-white p-5 shadow-lg">
+          <div className="h-[400px] w-full max-w-6xl overflow-y-scroll rounded-lg border border-gray-400 bg-white p-5 shadow-lg dark:bg-gray-700">
             {filteredData.length > 0 ? (
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
                 {filteredData.map((item: any) => (

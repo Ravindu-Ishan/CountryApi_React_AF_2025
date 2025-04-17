@@ -23,10 +23,10 @@ function Page() {
   }, []);
 
   return (
-    <div className="relative">
+    <div className="relative dark:text-white">
       {/* Background image with opacity */}
       <div
-        className="absolute inset-0 bg-[url(../../public/BackgroundMap.svg)] bg-cover bg-no-repeat opacity-50"
+        className="absolute inset-0 bg-[url(../../public/BackgroundMap.svg)] bg-cover bg-no-repeat opacity-50 dark:opacity-100 dark:bg-gray-600"
         aria-hidden="true"
       ></div>
       <div className="relative"> 

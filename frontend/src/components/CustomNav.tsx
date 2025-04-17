@@ -6,6 +6,18 @@ export function CustomNav() {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
+    const mode = localStorage.getItem("flowbite-theme-mode");
+    setIsDarkMode(mode === "dark");
+  }, []);
+
+  const handleToggle = () => {
+    const newMode = isDarkMode ? "light" : "dark";
+    localStorage.setItem("flowbite-theme-mode", newMode);
+    document.documentElement.classList.toggle("dark", newMode === "dark");
+    setIsDarkMode(newMode === "dark");
+  };
+
+  useEffect(() => {
     const root = document.documentElement;
     if (isDarkMode) {
       root.classList.add("dark");
@@ -25,14 +37,14 @@ export function CustomNav() {
           <ToggleSwitch
             checked={isDarkMode}
             label="Theme"
-            onChange={setIsDarkMode}
+            onChange={handleToggle}
             color="dark"
             className="focus:outline-none focus:ring-0"
           />
         </div>
         <div className="flex">
           <a href="#" className="text-md mt-2 mr-2 text-black hover:underline">
-            Welcome to NationsInfo
+            Welcome to NationInfo
           </a>
         </div>
       </div>
