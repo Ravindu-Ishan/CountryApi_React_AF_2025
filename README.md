@@ -13,8 +13,6 @@ git clone <repository-url>
 
 ### For development 
 
-Run
-
 ```bash
 npm run dev
 ```
@@ -30,4 +28,8 @@ npm run build
 npm run start
 ```
 
+## Environment configuration
 
+This project uses google maps api
+Create an API key by following google maps api guide 
+https://developers.google.com/maps/documentation/javascript/get-api-key
