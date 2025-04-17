@@ -43,7 +43,7 @@ export function CustomNav() {
           />
         </div>
         <div className="flex">
-          <a href="#" className="text-md mt-2 mr-2 text-black hover:underline">
+          <a href="#" className="text-md mt-2 mr-2 text-black hover:underline dark:text-white">
             Welcome to NationInfo
           </a>
         </div>
